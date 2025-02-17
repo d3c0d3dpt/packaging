@@ -8,7 +8,8 @@ jobs:
     strategy:
       matrix:
         package_target:
-          - amazonlinux2023-aarch64
+          # - amazonlinux2023-aarch64
+          - amazonlinux2023-x86_64
       fail-fast: false
     steps:
       - name: configure docker
@@ -28,3 +29,9 @@ jobs:
           ref: ${{ github.event.inputs.wkhtmltopdf_ref }}
       - name: build
         run: cd packaging && python3 ./build package-docker --clean ${{ matrix.package_target }} ../wkhtmltopdf
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-artifact
+          path: packaging/targets
+          retention-days: 1
