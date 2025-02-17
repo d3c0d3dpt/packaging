@@ -10,6 +10,7 @@ jobs:
         package_target:
           # - amazonlinux2023-aarch64
           - amazonlinux2023-x86_64
+          - bookworm-amd64
       fail-fast: false
     steps:
       - name: configure docker
