@@ -1,0 +1,30 @@
+name: release
+on:
+  push
+
+jobs:
+  docker:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        package_target:
+          - amazonlinux2023-aarch64
+      fail-fast: false
+    steps:
+      - name: configure docker
+        run:  |
+          echo '{ "experimental": true }' | sudo tee /etc/docker/daemon.json
+          sudo systemctl restart docker
+      - name: checkout packaging
+        uses: actions/checkout@v2
+        with:
+          path: packaging
+      - name: checkout wkhtmltopdf with submodules
+        uses: actions/checkout@v2
+        with:
+          repository: wkhtmltopdf/wkhtmltopdf
+          path: wkhtmltopdf
+          submodules: true
+          ref: ${{ github.event.inputs.wkhtmltopdf_ref }}
+      - name: build
+        run: cd packaging && python3 ./build package-docker --clean ${{ matrix.package_target }} ../wkhtmltopdf
